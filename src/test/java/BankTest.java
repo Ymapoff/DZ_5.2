@@ -8,10 +8,9 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.*;
-import static DataGenerator.*;
-import static DataGenerator.Registration.getRegisteredUser;
-import static DataGenerator.Registration.getUser;
-import static sun.security.jgss.GSSUtil.login;
+import static ru.netology.DataGenerator.*;
+import static ru.netology.DataGenerator.Registration.getRegisteredUser;
+import static ru.netology.DataGenerator.Registration.getUser;
 
 
 class BankTest {
