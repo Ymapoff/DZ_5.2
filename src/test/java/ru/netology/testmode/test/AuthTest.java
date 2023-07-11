@@ -1,5 +1,7 @@
+package ru.netology.testmode.test;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 
@@ -8,12 +10,13 @@ import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.*;
-import static ru.netology.DataGenerator.*;
-import static ru.netology.DataGenerator.Registration.getRegisteredUser;
-import static ru.netology.DataGenerator.Registration.getUser;
+import static ru.netology.testmode.data.DataGenerator.Registration.getRegisteredUser;
+import static ru.netology.testmode.data.DataGenerator.Registration.getUser;
+import static ru.netology.testmode.data.DataGenerator.getRandomLogin;
+import static ru.netology.testmode.data.DataGenerator.getRandomPassword;
 
 
-class BankTest {
+class AuthTest {
 
     @BeforeEach
     void setup() {
@@ -21,30 +24,33 @@ class BankTest {
     }
 
     @Test
-    void successfulRegistered() {
+    void successfullyRegisteredUser(){
         var registeredUser = getRegisteredUser("active");
-        $("[data-test-id=login] input").setValue(registeredUser.getLogin());
-        $("[data-test-id=password] input").setValue(registeredUser.getPassword());
-        $$("button").find(exactText("Продолжить")).click();
-        $(byText("Личный кабинет")).shouldBe(visible);
+            $("[data-test-id=login] input").setValue(registeredUser.getLogin());
+            $("[data-test-id=password] input").setValue(registeredUser.getPassword());
+            $("button.button").click();
+            $("h2").shouldHave(exactText("Личный кабинет")).shouldBe(visible);
+
     }
+
 
     @Test
     void errorNotRegisteredUser() {
         var notRegisteredUser = getUser("active");
         $("[data-test-id=login] input").setValue(notRegisteredUser.getLogin());
         $("[data-test-id=password] input").setValue(notRegisteredUser.getPassword());
-        $$("button").find(exactText("Продолжить")).click();
+        $("button.button").click();
         $(byText("Ошибка")).shouldBe(visible, Duration.ofSeconds(10));
         $(withText("Неверно указан логин или пароль")).shouldBe(visible, Duration.ofSeconds(10));
     }
+
 
     @Test
     void blockedUser() {
         var blockedUser = getRegisteredUser("blocked");
         $("[data-test-id=login] input").setValue(blockedUser.getLogin());
         $("[data-test-id=password] input").setValue(blockedUser.getPassword());
-        $$("button").find(exactText("Продолжить")).click();
+        $("button.button").click();
         $(byText("Ошибка")).shouldBe(visible, Duration.ofSeconds(10));
         $(withText("Пользователь заблокирован")).shouldBe(visible, Duration.ofSeconds(10));
     }
@@ -52,10 +58,10 @@ class BankTest {
     @Test
     void wrongLogin() {
         var registeredUser = getRegisteredUser("active");
-        var wrongLogin = login();
+        var wrongLogin = getRandomLogin();
         $("[data-test-id=login] input").setValue(wrongLogin);
         $("[data-test-id=password] input").setValue(registeredUser.getPassword());
-        $$("button").find(exactText("Продолжить")).click();
+        $("button.button").click();
         $(byText("Ошибка")).shouldBe(visible, Duration.ofSeconds(10));
         $(withText("Неверно указан логин или пароль")).shouldBe(visible, Duration.ofSeconds(10));
     }
@@ -63,7 +69,7 @@ class BankTest {
     @Test
     void wrongPassword() {
         var registeredUser = getRegisteredUser("active");
-        var wrongPassword = password();
+        var wrongPassword = getRandomPassword();
         $("[data-test-id=login] input").setValue(registeredUser.getLogin());
         $("[data-test-id=password] input").setValue(wrongPassword);
         $$("button").find(exactText("Продолжить")).click();

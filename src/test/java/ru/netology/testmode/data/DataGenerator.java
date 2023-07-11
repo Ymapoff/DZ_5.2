@@ -1,10 +1,14 @@
+package ru.netology.testmode.data;
+
 import com.github.javafaker.Faker;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import lombok.Value;
+
 import java.util.Locale;
+
 import static io.restassured.RestAssured.given;
 
 public class DataGenerator {
@@ -15,6 +19,7 @@ public class DataGenerator {
             .setContentType(ContentType.JSON)
             .log(LogDetail.ALL)
             .build();
+
     private static final Faker faker = new Faker(new Locale("en"));
 
     private DataGenerator() {
@@ -30,12 +35,14 @@ public class DataGenerator {
                 .statusCode(200);
     }
 
-    public static String login() {
-        return faker.name().firstName();
+    public static String getRandomLogin() {
+        String login = faker.name().username();
+        return login;
     }
 
-    public static String password() {
-        return faker.internet().password();
+    public static String getRandomPassword() {
+        String password = faker.internet().password();
+        return password;
     }
 
     public static class Registration {
@@ -43,13 +50,14 @@ public class DataGenerator {
         }
 
         public static RegistrationDto getUser(String status) {
-            return new RegistrationDto(login(), password(), status);
+            var user = new RegistrationDto(getRandomLogin(), getRandomPassword(), status);
+            return user;
         }
 
         public static RegistrationDto getRegisteredUser(String status) {
-            RegistrationDto getRegisteredUser = getUser(status);
-            sendRequest(getRegisteredUser);
-            return getRegisteredUser;
+            var registeredUser = getUser(status);
+            sendRequest(registeredUser);
+            return registeredUser;
         }
     }
 
